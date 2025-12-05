@@ -3,142 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WebP Converter</title>
-    <style>
-        :root {
-            --primary: #6366f1;
-            --bg: #0f172a;
-            --surface: #1e293b;
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .container {
-            background-color: var(--surface);
-            padding: 2rem;
-            border-radius: 1rem;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            text-align: center;
-        }
-
-        h1 { margin-bottom: 0.5rem; font-weight: 700; }
-        p { color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem; }
-
-        .drop-zone {
-            border: 2px dashed var(--text-muted);
-            border-radius: 0.75rem;
-            padding: 3rem 1.5rem;
-            transition: all 0.2s;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .drop-zone:hover, .drop-zone.dragover {
-            border-color: var(--primary);
-            background-color: rgba(99, 102, 241, 0.1);
-        }
-
-        .drop-zone input {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0; left: 0;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        .icon { font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem; display: block; }
-        
-        .file-info {
-            margin-top: 1.5rem;
-            font-size: 0.85rem;
-            color: var(--primary);
-            min-height: 1.2em;
-        }
-
-        .btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            margin-top: 1.5rem;
-            cursor: pointer;
-            transition: transform 0.1s;
-            width: 100%;
-        }
-
-        .btn:active { transform: scale(0.98); }
-        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    </style>
+    <title>WebP Converter Studio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='sejutajasa-favicon.svg') }}">
 </head>
 <body>
 
-<div class="container">
-    <h1>WebP Studio</h1>
-    <p>Professional Bulk Image Converter to WebP</p>
-
-    <form action="/convert" method="post" enctype="multipart/form-data" id="uploadForm">
-        <div class="drop-zone" id="dropZone">
-            <span class="icon">📂</span>
-            <span>Drop images here or click to browse</span>
-            <input type="file" name="images" id="fileInput" multiple accept="image/*" required>
+    <div class="layout-wrapper">
+        
+        <div class="nav-container">
+            <nav class="breadcrumbs">
+                <a href="https://sejutajasa.com">Home</a>
+                <span>/</span>
+                <div class="current">Image to WebP</div>
+            </nav>
         </div>
-        <div class="file-info" id="fileInfo"></div>
-        <button type="submit" class="btn" id="submitBtn">Convert Files</button>
-    </form>
-</div>
 
-<script>
-    const fileInput = document.getElementById('fileInput');
-    const fileInfo = document.getElementById('fileInfo');
-    const dropZone = document.getElementById('dropZone');
+        <main class="app-card">
+            
+            <div class="card-header">
+                <h1>WebP Studio</h1>
+                
+                <a href="https://sejutajasa.com" class="close-btn" aria-label="Close Tool">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </a>
+            </div>
 
-    // Drag effects
-    ['dragenter', 'dragover'].forEach(e => {
-        dropZone.addEventListener(e, (ev) => {
+            <p class="subtitle">Professional bulk image compression tool.</p>
+
+            <form action="/convert" method="post" enctype="multipart/form-data">
+                <div class="drop-zone" id="dropZone">
+                    <div class="icon-circle">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                    </div>
+                    <span class="drop-text">Drag and drop files, or <b>click to browse</b>. <br>Supported formats: JPG, JPEG, PNG.</span>
+                    <input type="file" name="images" id="fileInput" multiple accept="image/jpeg, image/png, image/jpg" required>
+                </div>
+                
+                <div class="file-info" id="fileInfo"></div>
+                
+                <button type="submit" class="btn-primary">Convert Files</button>
+            </form>
+        </main>
+
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const dropZone = document.getElementById('dropZone');
+        const submitBtn = document.querySelector('button[type="submit"]'); // Select the button
+
+        // Drag Visuals
+        ['dragenter', 'dragover'].forEach(e => dropZone.addEventListener(e, ev => {
             ev.preventDefault();
             dropZone.classList.add('dragover');
-        });
-    });
+        }));
 
-    ['dragleave', 'drop'].forEach(e => {
-        dropZone.addEventListener(e, (ev) => {
+        ['dragleave', 'drop'].forEach(e => dropZone.addEventListener(e, ev => {
             ev.preventDefault();
             dropZone.classList.remove('dragover');
+        }));
+
+        // Validator
+        const handleFiles = (files) => {
+            const count = files.length;
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            let hasInvalidFile = false;
+
+            // Check for non-image files
+            Array.from(files).forEach(file => {
+                if (!validTypes.includes(file.type)) {
+                    hasInvalidFile = true;
+                }
+            });
+
+            if (hasInvalidFile) {
+                fileInfo.textContent = "Error: Only JPG, JPEG, and PNG files are allowed.";
+                fileInfo.className = 'file-status active error'; // Set classes specificall
+                // fileInfo.classList.add('active');
+                // fileInfo.classList.add('error');
+                submitBtn.disabled = true; // Disable button
+                fileInput.value = ''; // Reset input
+            } 
+            else if (count > 0) {
+                fileInfo.textContent = `${count} file${count > 1 ? 's' : ''} ready to process.`;
+                fileInfo.className = 'file-status active'; // Set classes specifically
+                // fileInfo.classList.add('active');
+                // fileInfo.classList.remove('error');
+                submitBtn.disabled = false; // Enable button
+            } 
+            else {
+                fileInfo.className = 'file-status'; // Removes 'active', hiding the element
+                fileInfo.textContent = '';
+            }
+        };
+
+        dropZone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            fileInput.files = files; // Sync drop with input
+            handleFiles(files);
         });
-    });
 
-    dropZone.addEventListener('drop', (e) => {
-        fileInput.files = e.dataTransfer.files;
-        updateFileInfo();
-    });
-
-    fileInput.addEventListener('change', updateFileInfo);
-
-    function updateFileInfo() {
-        const count = fileInput.files.length;
-        if (count > 0) {
-            fileInfo.textContent = `${count} file${count > 1 ? 's' : ''} selected ready for conversion.`;
-        } else {
-            fileInfo.textContent = '';
-        }
-    }
-</script>
-
+        fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+    </script>
 </body>
 </html>

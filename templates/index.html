@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='sejutajasa-favicon.svg') }}">
 </head>
+
 <body>
 
     <div class="layout-wrapper">
@@ -35,31 +36,31 @@
             <p class="subtitle">Professional bulk image compression tool.</p>
 
             <form action="/convert" method="post" enctype="multipart/form-data">
-                <div class="drop-zone" id="dropZone">
-                    <div class="icon-circle">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="17 8 12 3 7 8"/>
-                            <line x1="12" y1="3" x2="12" y2="15"/>
-                        </svg>
-                    </div>
-                    <span class="drop-text">Drag and drop files, or <b>click to browse</b>. <br>Supported formats: JPG, JPEG, PNG.</span>
-                    <input type="file" name="images" id="fileInput" multiple accept="image/jpeg, image/png, image/jpg" required>
+            <div class="drop-zone" id="dropZone">
+                <div class="icon-circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="17 8 12 3 7 8"/>
+                        <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
                 </div>
-                
-                <div class="file-info" id="fileInfo"></div>
-                
-                <button type="submit" class="btn-primary">Convert Files</button>
-            </form>
-        </main>
-
-    </div>
+                 <span class="drop-text">Drag and drop files, or <b>click to browse</b>. <br>Supported formats: JPG, JPEG, PNG.</span>
+                <input type="file" name="images" id="fileInput" multiple accept=".jpg,.jpeg,.png" required>
+            </div>
+            
+            <div class="file-status {% if error %}active error{% endif %}" id="fileInfo">
+                {{ error if error else '' }}
+            </div>
+            
+            <button type="submit" class="btn-primary">Convert Files</button>
+        </form>
+    </main>
 
     <script>
         const fileInput = document.getElementById('fileInput');
         const fileInfo = document.getElementById('fileInfo');
         const dropZone = document.getElementById('dropZone');
-        const submitBtn = document.querySelector('button[type="submit"]'); // Select the button
+        const submitBtn = document.querySelector('button[type="submit"]');
 
         // Drag Visuals
         ['dragenter', 'dragover'].forEach(e => dropZone.addEventListener(e, ev => {
@@ -87,32 +88,33 @@
 
             if (hasInvalidFile) {
                 fileInfo.textContent = "Error: Only JPG, JPEG, and PNG files are allowed.";
-                fileInfo.className = 'file-status active error'; // Set classes specificall
-                // fileInfo.classList.add('active');
-                // fileInfo.classList.add('error');
-                submitBtn.disabled = true; // Disable button
-                fileInput.value = ''; // Reset input
+                fileInfo.className = 'file-status active error';
+                submitBtn.disabled = true;
+                // Robustly reset file input for all browsers
+                const newInput = fileInput.cloneNode(true);
+                fileInput.parentNode.replaceChild(newInput, fileInput);
+                // Re-attach event listener to new input
+                newInput.addEventListener('change', () => handleFiles(newInput.files));
             } 
             else if (count > 0) {
                 fileInfo.textContent = `${count} file${count > 1 ? 's' : ''} ready to process.`;
-                fileInfo.className = 'file-status active'; // Set classes specifically
-                // fileInfo.classList.add('active');
-                // fileInfo.classList.remove('error');
-                submitBtn.disabled = false; // Enable button
+                fileInfo.className = 'file-status active';
+                submitBtn.disabled = false;
             } 
             else {
-                fileInfo.className = 'file-status'; // Removes 'active', hiding the element
+                fileInfo.className = 'file-status';
                 fileInfo.textContent = '';
             }
         };
 
         dropZone.addEventListener('drop', (e) => {
             const files = e.dataTransfer.files;
-            fileInput.files = files; // Sync drop with input
+            fileInput.files = files;
             handleFiles(files);
         });
 
         fileInput.addEventListener('change', () => handleFiles(fileInput.files));
     </script>
+
 </body>
 </html>

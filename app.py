@@ -33,34 +33,32 @@ def convert_to_webp(file_storage):
 def index():
     return render_template('index.html')
 
+# --- REPLACE THE '/convert' ROUTE ---
 @app.route('/convert', methods=['POST'])
 def convert():
     try:
         # 1. Check if file part exists
         if 'images' not in request.files:
-            return "Error: No file part", 400
+            return render_template('index.html', error="Error: No file part found.")
 
         files = request.files.getlist('images')
 
         # 2. Check if files were selected
         if not files or files[0].filename == '':
-            return "Error: No selected files", 400
+            return render_template('index.html', error="Error: No files selected.")
 
         # 3. Validate File Types
         for file in files:
             if not allowed_file(file.filename):
-                return "Error: Invalid file format. Only JPG and PNG are allowed.", 400
+                return render_template('index.html', error="Error: Invalid file format. Only JPG and PNG are allowed.")
 
-        # --- Conversion Logic ---
-        
-        # Single File Case
+        # --- Conversion Logic (Same as before) ---
         if len(files) == 1:
             file = files[0]
             webp_data = convert_to_webp(file)
             filename = os.path.splitext(file.filename)[0] + ".webp"
             return send_file(webp_data, mimetype='image/webp', as_attachment=True, download_name=filename)
 
-        # Bulk Case (ZIP)
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
             for file in files:
@@ -72,8 +70,8 @@ def convert():
         return send_file(zip_buffer, mimetype='application/zip', as_attachment=True, download_name="converted_images.zip")
     
     except Exception as e:
-        # Generic error catch-all
-        return "Error: Unable to process files. They may be corrupted or unsupported.", 500
+        # Catch-all for processing errors
+        return render_template('index.html', error="Error: Unable to process files. Please try again.")
 
 if __name__ == '__main__':
     app.run(debug=True)

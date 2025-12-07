@@ -6,7 +6,8 @@ from flask import Flask, render_template, request, send_file
 from PIL import Image
 from PIL import Image, UnidentifiedImageError
 
-app = Flask(__name__)
+
+app = Flask(__name__, static_folder='../static', template_folder='../templates')
 logging.basicConfig(level=logging.DEBUG)
 
 # Limit upload size to 4MB (Vercel Limit)

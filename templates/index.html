@@ -73,37 +73,50 @@
             dropZone.classList.remove('dragover');
         }));
 
+        // Reset Function
+        window.clearFiles = function() {
+            fileInput.value = ''; // Clear actual input
+            fileInfo.className = 'file-status'; // Hide container
+            fileInfo.innerHTML = ''; // Clear text
+            submitBtn.disabled = false; // Optional: Reset button state
+            
+            // If you want to disable submit when empty:
+            // submitBtn.disabled = true; 
+        };
+
         // Validator
         const handleFiles = (files) => {
             const count = files.length;
             const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
             let hasInvalidFile = false;
 
-            // Check for non-image files
             Array.from(files).forEach(file => {
-                if (!validTypes.includes(file.type)) {
-                    hasInvalidFile = true;
-                }
+                if (!validTypes.includes(file.type)) hasInvalidFile = true;
             });
 
             if (hasInvalidFile) {
-                fileInfo.textContent = "Error: Only JPG, JPEG, and PNG files are allowed.";
+                // Error State
+                fileInfo.innerHTML = `
+                    <span>Error: Only JPG/PNG allowed.</span>
+                    <button type="button" class="clear-btn" onclick="clearFiles()">Clear</button>
+                `;
                 fileInfo.className = 'file-status active error';
                 submitBtn.disabled = true;
-                // Robustly reset file input for all browsers
-                const newInput = fileInput.cloneNode(true);
-                fileInput.parentNode.replaceChild(newInput, fileInput);
-                // Re-attach event listener to new input
-                newInput.addEventListener('change', () => handleFiles(newInput.files));
+                fileInput.value = ''; 
             } 
             else if (count > 0) {
-                fileInfo.textContent = `${count} file${count > 1 ? 's' : ''} ready to process.`;
+                // Success State
+                fileInfo.innerHTML = `
+                    <span>${count} file${count > 1 ? 's' : ''} ready.</span>
+                    <button type="button" class="clear-btn" onclick="clearFiles()">Clear</button>
+                `;
                 fileInfo.className = 'file-status active';
                 submitBtn.disabled = false;
             } 
             else {
+                // Empty State
                 fileInfo.className = 'file-status';
-                fileInfo.textContent = '';
+                fileInfo.innerHTML = '';
             }
         };
 

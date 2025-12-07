@@ -228,3 +228,36 @@ h1 {
     margin-top: 16px;
 }
 .btn-primary:hover { background-color: var(--primary-hover); }
+
+/* --- CLEAR BUTTON (Ghost Style) --- */
+.clear-btn {
+    margin-left: auto; /* Pushes to right */
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+
+    /* Typography */
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase; /* Modern "Badge" feel */
+    letter-spacing: 0.5px;
+    color: inherit; /* Takes the Blue or Red color from the parent */
+    
+    /* Shape & Interaction */
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    opacity: 0.75;
+}
+
+.clear-btn:hover {
+    /* Creates a subtle darkened background on hover */
+    background-color: rgba(0, 0, 0, 0.06); 
+    opacity: 1;
+    transform: translateY(-1px); /* Slight lift effect */
+}
+
+.clear-btn:active {
+    transform: translateY(0);
+    background-color: rgba(0, 0, 0, 0.1);
+}

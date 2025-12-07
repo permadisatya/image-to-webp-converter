@@ -4,6 +4,7 @@ import zipfile
 import logging
 from flask import Flask, render_template, request, send_file
 from PIL import Image
+from PIL import Image, UnidentifiedImageError
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -99,13 +100,20 @@ def index():
                     filename = os.path.splitext(file.filename)[0] + ".webp"
                     zip_file.writestr(filename, webp_data.read())
             
+            # ... inside the index() function, at the bottom ...
+
             zip_buffer.seek(0)
             return send_file(zip_buffer, mimetype='application/zip', as_attachment=True, download_name="converted_images.zip")
         
+        # --- NEW: Specific PIL Error Handling ---
+        except UnidentifiedImageError:
+            return render_template('index.html', error="Error: One or more files are corrupted or unreadable.")
+            
+        # --- EXISTING: Generic Error Handling ---
         except Exception as e:
+            print(e) # Optional: prints error to Vercel logs for debugging
             return render_template('index.html', error="Error: Unable to process files. Please try again.")
 
-    # If method is GET (loading the page) or POST failed (rendering error), return the page
     return render_template('index.html')
 
 if __name__ == '__main__':
